@@ -13,7 +13,7 @@ const USER_NAME = "Test User";
 const USER_EMAIL = "test@example.com";
 const USER_PASSWORD = "password";
 
-it("logins returns a successful response", function () {
+it("logins_returns_a_successful_response", function () {
     $credentials = [
         "name" => USER_NAME,
         "email" => USER_EMAIL,
@@ -39,7 +39,6 @@ it("logins returns a successful response", function () {
     $this->app->instance(User::class, $mockUser);
     $authService = $this->app->make(\App\Service\AuthService::class);
     $response = $authService->login($loginRequest);
-    // $response = (new \App\Service\AuthService())->login($loginRequest);
 
     // Assert
     expect($response->getStatusCode())->toBe(200);
@@ -57,7 +56,7 @@ it("logins returns a successful response", function () {
     ]);
 });
 
-it("logins returns an unauthorized response", function () {
+it("logins_returns_an_unauthorized_response", function () {
     $credentials = [
         "email" => USER_EMAIL,
         "password" => "password",
@@ -74,7 +73,6 @@ it("logins returns an unauthorized response", function () {
 
     $authService = $this->app->make(\App\Service\AuthService::class);
     $response = $authService->login($loginRequest);
-    // $response = (new \App\Service\AuthService())->login($loginRequest);
 
     // Assert
     expect($response->getStatusCode())->toBe(401);
@@ -130,6 +128,47 @@ it("register_sucessful", function () {
         "authorization" => [
             "token" => true,
             "type" => "Bearer",
+        ],
+    ]);
+});
+
+it("logout_successful", function () {
+    // Mock JWTAuth facade
+    JWTAuth::shouldReceive("getToken")->andReturn("token");
+    JWTAuth::shouldReceive("invalidate")->andReturn(true);
+
+    // Act
+    $authService = $this->app->make(\App\Service\AuthService::class);
+    $response = $authService->logout();
+
+    // Assert
+    expect($response->getStatusCode())->toBe(200);
+    expect(json_decode(json_encode($response->getData()), true))->toBe([
+        "status" => "success",
+        "message" => "User logged out successfully",
+    ]);
+});
+
+it("me_successful", function () {
+    $mockUser = Mockery::mock(User::class);
+    $mockUser->shouldReceive("jsonSerialize")->andReturn([
+        "name" => USER_NAME,
+        "email" => USER_EMAIL,
+    ]);
+
+    // Mocking the Auth facade
+    Auth::shouldReceive("user")->andReturn($mockUser);
+
+    $this->app->instance(User::class, $mockUser);
+    $authService = $this->app->make(\App\Service\AuthService::class);
+    $response = $authService->me();
+
+    expect($response->getStatusCode())->toBe(200);
+    expect(json_decode(json_encode($response->getData()), true))->toBe([
+        "status" => "success",
+        "user" => [
+            "name" => USER_NAME,
+            "email" => USER_EMAIL,
         ],
     ]);
 });

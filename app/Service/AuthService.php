@@ -85,4 +85,32 @@ class AuthService
             ]
         ], 201);
     }
+
+    /**
+     * Logout user
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout(): \Illuminate\Http\JsonResponse
+    {
+        JWTAuth::invalidate(JWTAuth::getToken());
+
+        return response()->json([
+            "status" => "success",
+            "message" => "User logged out successfully",
+        ], 200);
+    }
+
+    /**
+     * Get authenticated user
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me(): \Illuminate\Http\JsonResponse
+    {
+        return response()->json([
+            "status" => "success",
+            "user" => Auth::user(),
+        ], 200);
+    }
 }

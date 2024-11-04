@@ -38,4 +38,22 @@ class AuthController extends Controller
     {
         return $this->authService->register($request);
     }
+
+    /**
+     * Logout a user
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout(): \Illuminate\Http\JsonResponse
+    {
+        return $this->authService->logout();
+    }
+
+    /**
+     * Get the authenticated user
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me(): \Illuminate\Http\JsonResponse
+    {
+        return $this->authService->me();
+    }
 }
