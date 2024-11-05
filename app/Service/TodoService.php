@@ -27,7 +27,7 @@ class TodoService
      * @return ModleTodo
      * @throws ModelNotFoundException
      */
-    private function findTodoOrFail(int $id): ModelTodo
+    protected function findTodoOrFail(int $id): ModelTodo
     {
         return $this->todo->findOrFail($id);
     }
@@ -36,12 +36,12 @@ class TodoService
     /**
      * Create a data
      *
-     * @param TodoCreateRequest $todoCreateRequest
+     * @param array $data
      * @return \Illuminate\Http\JsonResponse
      */
-    public function create(TodoCreateRequest $todoCreateRequest): \Illuminate\Http\JsonResponse
+    public function create(array $data): \Illuminate\Http\JsonResponse
     {
-        $todo = $this->todo->create($todoCreateRequest->validated());
+        $todo = $this->todo->create($data);
 
         return $this->successResponse(TodoConstant::TODO_CREATE_SUCCESS, $todo, 201);
     }
@@ -67,15 +67,15 @@ class TodoService
      * Update a data
      *
      * @param int $id
-     * @param TodoUpdateRequest $todoUpdateRequest
+     * @param array $data
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(int $id, TodoUpdateRequest $todoUpdateRequest): \Illuminate\Http\JsonResponse
+    public function update(int $id, array $data): \Illuminate\Http\JsonResponse
     {
         try {
             $todo = $this->findTodoOrFail($id);
 
-            $todo->update($todoUpdateRequest->validated());
+            $todo->update($data);
 
             return $this->successResponse(TodoConstant::TODO_UPDATE_SUCCESS, $todo);
         } catch (ModelNotFoundException $e) {
@@ -96,7 +96,7 @@ class TodoService
 
             $todo->delete();
 
-            return $this->successResponse(TodoConstant::TODO_DELETE_SUCCESS, $todo);
+            return $this->successResponse(TodoConstant::TODO_DELETE_SUCCESS, [], 200);
         } catch (ModelNotFoundException $e) {
             return $this->errorResponse(TodoConstant::TODO_NOT_FOUND, [], 404);
         }
