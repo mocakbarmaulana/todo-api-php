@@ -46,9 +46,6 @@ class RandomJokeService
         } catch (ConnectionException $e) {
             Log::error("Network error while getting joke: {$e->getMessage()}");
             $jokeResponse->message = 'Network error while getting joke';
-        } catch (RequestException $e) {
-            Log::error("Request error while getting joke: {$e->getMessage()}");
-            $jokeResponse->message = 'Request error while getting joke';
         } catch (\Exception $e) {
             Log::error("Unexpected error while getting joke: {$e->getMessage()}");
             $jokeResponse->message = 'Unexpected error while getting joke';
