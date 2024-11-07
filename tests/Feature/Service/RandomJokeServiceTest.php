@@ -2,6 +2,7 @@
 
 use App\Service\RandomJokeService;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 // Define mock data for a successful response
 $mockJokeData = [
@@ -31,4 +32,26 @@ it("test_get_joke_successfully", function() use ($mockJokeData) {
     expect($response->joke->type)->toBe($mockJokeData['type']);
     expect($response->joke->setup)->toBe($mockJokeData['setup']);
     expect($response->joke->punchline)->toBe($mockJokeData['punchline']);
+});
+
+it("test_get_joke_404_response", function() {
+    // Mock Http Response
+    Http::fake([
+        '*' => Http::response(null, 404),
+    ]);
+
+    // Create an instance of RandomJokeService
+    $client = Http::withOptions([]);
+    $randomJokeService = new RandomJokeService($client);
+
+    // Call getJoke method
+    $response = $randomJokeService->getJoke();
+
+    // Log the response
+    // Log::shouldReceive('error')->once()->with('Joke not found');
+
+    // Assert the response
+    expect($response->status)->toBe('error');
+    expect($response->message)->toBe('Failed to get joke');
+    expect($response->joke)->toBeNull();
 });
