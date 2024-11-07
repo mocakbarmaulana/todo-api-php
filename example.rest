@@ -1,0 +1,57 @@
+@baseUrl = http://localhost:8000/api/v1
+
+### Register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "admin",
+  "email": "test@example.com",
+  "password": "password",
+  "password_confirmation": "password"
+}
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password"
+}
+
+### Variables Response
+@accessToken = {{login.response.body.authorization.token}}
+
+### Logout
+POST {{baseUrl}}/auth/logout
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+
+}
+
+### User Profile
+GET {{baseUrl}}/auth/me
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+
+}
+
+### Random Joke
+GET {{baseUrl}}/jokes
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+
+}

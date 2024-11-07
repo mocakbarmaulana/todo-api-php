@@ -35,4 +35,7 @@ return [
         ],
     ],
 
+    'random_joke' => [
+        'base_uri' => env('RANDOM_JOKE_BASE_URI', 'https://official-joke-api.appspot.com'),
+    ],
 ];
