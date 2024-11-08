@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "Laravel",
-        "_postman_id": "69db7dcd-19bd-4729-aeef-188b2636995e",
+        "_postman_id": "203feab9-957f-4f2b-af83-83887173c2d7",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -93,12 +93,16 @@
                         "method": "POST",
                         "header": [
                             {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
                                 "key": "Content-Type",
                                 "value": "application\/json"
                             },
                             {
-                                "key": "Accept",
-                                "value": "application\/json"
+                                "key": "Authorization",
+                                "value": "Bearer {token}"
                             }
                         ],
                         "body": null,
@@ -118,12 +122,16 @@
                         "method": "GET",
                         "header": [
                             {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
                                 "key": "Content-Type",
                                 "value": "application\/json"
                             },
                             {
-                                "key": "Accept",
-                                "value": "application\/json"
+                                "key": "Authorization",
+                                "value": "Bearer {token}"
                             }
                         ],
                         "body": null,

@@ -56,6 +56,9 @@ class AuthController extends Controller
     /**
      * Logout a user
      * @authenticated
+     * @header Accept application/json
+     * @header Content-Type application/json
+     * @header Authorization Bearer {token}
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout(): \Illuminate\Http\JsonResponse
@@ -66,6 +69,9 @@ class AuthController extends Controller
     /**
      * Get the authenticated user
      * @authenticated
+     * @header Accept application/json
+     * @header Content-Type application/json
+     * @header Authorization Bearer {token}
      * @return \Illuminate\Http\JsonResponse
      */
     public function me(): \Illuminate\Http\JsonResponse

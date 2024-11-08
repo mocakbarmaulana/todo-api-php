@@ -149,8 +149,9 @@ endpoints:
       authenticated: true
       custom: []
     headers:
-      Content-Type: application/json
       Accept: application/json
+      Content-Type: application/json
+      Authorization: 'Bearer {token}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -181,8 +182,9 @@ endpoints:
       authenticated: true
       custom: []
     headers:
-      Content-Type: application/json
       Accept: application/json
+      Content-Type: application/json
+      Authorization: 'Bearer {token}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
