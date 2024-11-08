@@ -49,3 +49,6 @@ Ikuti langkah-langkah berikut untuk menginstal dan menjalankan aplikasi:
    http://localhost:8000
    ```
 
+## Api Dokumentasi
+buka `http://localhost:8000/docs` untuk melihat kesuluruhan list api yang dimiliki.
+
