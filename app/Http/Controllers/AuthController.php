@@ -6,6 +6,12 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Service\AuthService;
 
+/**
+ * @group Auth
+ *
+ * APIs for managing authentication
+ * @package App\Http\Controllers
+ */
 class AuthController extends Controller
 {
     protected AuthService $authService;
@@ -21,6 +27,9 @@ class AuthController extends Controller
 
     /**
      * Login a user
+     * @bodyparam email string required The email of the user. Example: test@example.com
+     * @bodyparam password string required The password of the user. Example: password
+     *
      * @param LoginRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -31,6 +40,11 @@ class AuthController extends Controller
 
     /**
      * Register a user
+     * @bodyparam name string required The name of the user. Example: John Doe
+     * @bodyparam email string required The email of the user. Example: test@example.com
+     * @bodyparam password string required The password of the user. Example: password
+     * @bodyparam password_confirmation string required The password confirmation of the user. Example: password
+     *
      * @param RegisterRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -41,6 +55,7 @@ class AuthController extends Controller
 
     /**
      * Logout a user
+     * @authenticated
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout(): \Illuminate\Http\JsonResponse
@@ -50,6 +65,7 @@ class AuthController extends Controller
 
     /**
      * Get the authenticated user
+     * @authenticated
      * @return \Illuminate\Http\JsonResponse
      */
     public function me(): \Illuminate\Http\JsonResponse
