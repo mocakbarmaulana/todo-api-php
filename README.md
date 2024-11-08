@@ -51,4 +51,6 @@ Ikuti langkah-langkah berikut untuk menginstal dan menjalankan aplikasi:
 
 ## Api Dokumentasi
 buka `http://localhost:8000/docs` untuk melihat kesuluruhan list api yang dimiliki.
+<img width="1407" alt="image" src="https://github.com/user-attachments/assets/e80bc520-d7ce-4afa-9660-39ee8a6f8894">
+
 
