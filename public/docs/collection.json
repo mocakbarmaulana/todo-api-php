@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "Todo API",
-        "_postman_id": "4f1bdb1b-906e-45c7-b2e4-8b89ae338812",
+        "_postman_id": "0af5c68f-0ed8-49af-bfd1-859e0c2fad6b",
         "description": "Aplikasi Simple TODO API adalah aplikasi yang memungkinkan pengguna untuk mengelola daftar tugas (TODO) mereka dengan mudah. Aplikasi ini dibangun menggunakan PHP 8.3+, Composer, dan PostgreSQL sebagai basis data. API ini dirancang untuk memberikan antarmuka yang sederhana dan efisien untuk operasi CRUD (Create, Read, Update, Delete) pada tugas.",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -255,7 +255,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"is_completed\":\"1\",\"order_type\":\"asc\"}"
+                            "raw": "{\"is_completed\":\"0\",\"order_type\":\"asc\"}"
                         },
                         "description": ""
                     },
@@ -361,6 +361,75 @@
                             "name": ""
                         }
                     ]
+                },
+                {
+                    "name": "Update a tod'os",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/todos\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/todos\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "The ID of the tod'os."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"title\":\"My first tod'os\",\"description\":\"This is my first tod'os\",\"completed\":false}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete a tod'os",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/todos\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/todos\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "The ID of the tod'os."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
                 }
             ]
         }

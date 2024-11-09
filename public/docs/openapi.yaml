@@ -183,7 +183,7 @@ paths:
                 is_completed:
                   type: boolean
                   description: ''
-                  example: '1'
+                  example: '0'
                   nullable: true
                   enum:
                     - '0'
@@ -251,6 +251,48 @@ paths:
                   message:
                     type: string
                     example: Unauthenticated.
+      tags:
+        - "Tod'os"
+    put:
+      summary: "Update a tod'os"
+      operationId: updateATodos
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - "Tod'os"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: "The title of the tod'os."
+                  example: "My first tod'os"
+                  nullable: false
+                description:
+                  type: string
+                  description: "The description of the tod'os."
+                  example: "This is my first tod'os"
+                  nullable: false
+                completed:
+                  type: boolean
+                  description: "The completed status of the tod'os."
+                  example: false
+                  nullable: false
+              required:
+                - title
+                - description
+                - completed
+    delete:
+      summary: "Delete a tod'os"
+      operationId: deleteATodos
+      description: ''
+      parameters: []
+      responses: {  }
       tags:
         - "Tod'os"
     parameters:

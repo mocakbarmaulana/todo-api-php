@@ -61,7 +61,7 @@ class TodoService
             // If todos are found, update the response
             if ($todos->isNotEmpty()) {
                 $response->todo = $todos;
-                $response->message = 'Success to get todo';
+                $response->message = sprintf(TodoConstant::TODO_SUCCESSFULLY, 'get');
                 $response->statusCode = 200;
             } else {
                 $response->message = 'No todos found';
@@ -99,7 +99,7 @@ class TodoService
 
             $response->status = 'success';
             $response->todo = $todo;
-            $response->message = TodoConstant::TODO_CREATE_SUCCESS;
+            $response->message = sprintf(TodoConstant::TODO_SUCCESSFULLY, 'created');
             $response->statusCode = 201;
         } catch (\Illuminate\Database\QueryException $e) {
             Log::error("Database error while creating todo: {$e->getMessage()}");
@@ -133,7 +133,7 @@ class TodoService
 
             $response->status = 'success';
             $response->todo = $todo;
-            $response->message = TodoConstant::TODO_GET_SUCCESS;
+            $response->message = sprintf(TodoConstant::TODO_SUCCESSFULLY, 'get');
             $response->statusCode = 200;
         } catch (ModelNotFoundException $e) {
             Log::error("Todo not found: {$e->getMessage()}");
@@ -154,38 +154,78 @@ class TodoService
      * Update a data
      *
      * @param int $id
-     * @param array $data
-     * @return \Illuminate\Http\JsonResponse
+     * @param TodoDto $data
+     * @return TodoResponseDto
      */
-    public function update(int $id, array $data): \Illuminate\Http\JsonResponse
+    public function update(int $id, TodoDto $data): TodoResponseDto
     {
+        $response = new TodoResponseDto(
+            todo: null,
+            status: 'error',
+            message: sprintf(TodoConstant::TODO_FAILED, 'update'),
+            statusCode: 500
+        );
+
         try {
             $todo = $this->findTodoOrFail($id);
+            $data->created_at = $todo->created_at;
 
-            $todo->update($data);
+            $todo->update($data->toArray());
 
-            return $this->successResponse(TodoConstant::TODO_UPDATE_SUCCESS, $todo);
+            $response->status = 'success';
+            $response->todo = $todo;
+            $response->message = sprintf(TodoConstant::TODO_SUCCESSFULLY, 'update');
+            $response->statusCode = 200;
         } catch (ModelNotFoundException $e) {
-            return $this->errorResponse(TodoConstant::TODO_NOT_FOUND, [], 404);
+            Log::error("Todo not found: {$e->getMessage()}");
+            $response->message = TodoConstant::TODO_NOT_FOUND;
+            $response->statusCode = 404;
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error("Database error while updating todo: {$e->getMessage()}");
+            $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Database', 'updating');
+        } catch (\Exception $e) {
+            Log::error("Unexpected error while updating todo: {$e->getMessage()}");
+            $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Unexpected', 'updating');
         }
+
+        return $response;
     }
 
     /**
      * Delete a data
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return TodoResponseDto
      */
-    public function delete(int $id): \Illuminate\Http\JsonResponse
+    public function delete(int $id): TodoResponseDto
     {
+        $response = new TodoResponseDto(
+            todo: null,
+            status: 'error',
+            message: sprintf(TodoConstant::TODO_FAILED, 'delete'),
+            statusCode: 500
+        );
+            
         try {
             $todo = $this->findTodoOrFail($id);
 
             $todo->delete();
 
-            return $this->successResponse(TodoConstant::TODO_DELETE_SUCCESS, [], 200);
+            $response->status = 'success';
+            $response->message = sprintf(TodoConstant::TODO_SUCCESSFULLY, 'deleted');
+            $response->statusCode = 200;
         } catch (ModelNotFoundException $e) {
-            return $this->errorResponse(TodoConstant::TODO_NOT_FOUND, [], 404);
+            Log::error("Todo not found: {$e->getMessage()}");
+            $response->message = TodoConstant::TODO_NOT_FOUND;
+            $response->statusCode = 404;
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error("Database error while deleting todo: {$e->getMessage()}");
+            $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Database', 'deleting');
+        } catch (\Exception $e) {
+            Log::error("Unexpected error while deleting todo: {$e->getMessage()}");
+            $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Unexpected', 'deleting');
         }
+
+        return $response;
     }
 }

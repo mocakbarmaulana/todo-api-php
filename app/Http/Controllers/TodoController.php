@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Todo\TodoCreateRequest;
 use App\Http\Requests\Todo\TodoIndexRequest;
+use App\Http\Requests\Todo\TodoUpdateRequest;
 use App\Service\TodoService;
 use App\Traits\JsonResponseTrait;
 use Illuminate\Support\Facades\Auth;
@@ -70,7 +71,7 @@ class TodoController extends Controller
             description: $todoCreateRequest->get('description'),
             completed: $todoCreateRequest->get('completed'),
             user_id: Auth::id(),
-            completed_at: $todoCreateRequest->get('completed_at', null) ? now() : null,
+            completed_at: $todoCreateRequest->get('completed', null) ? now() : null,
             due_date: $todoCreateRequest->get('due_date', null),
             created_at: now(),
             updated_at: now(),
@@ -96,6 +97,60 @@ class TodoController extends Controller
     public function show(int $id): \Illuminate\Http\JsonResponse
     {
         $response = $this->todoService->detail($id);
+
+        return $this->jsonResponse(
+            $response->status,
+            $response->message,
+            $response->todo ?? [],
+            $response->statusCode
+        );
+    }
+
+    /**
+     * Update a tod'os
+     * @urlParam id required The ID of the tod'os. Example: 1
+     * @bodyParam title string required The title of the tod'os. Example: My first tod'os
+     * @bodyParam description string required The description of the tod'os. Example: This is my first tod'os
+     * @bodyParam completed boolean required The completed status of the tod'os. Example: 0
+     *
+     * @param TodoUpdateRequest $todoUpdateRequest
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(TodoUpdateRequest $todoUpdateRequest, int $id): \Illuminate\Http\JsonResponse
+    {
+        $todoDto = new \App\Dto\Todo\TodoDto(
+            id: $id,
+            title: $todoUpdateRequest->get('title'),
+            description: $todoUpdateRequest->get('description'),
+            completed: $todoUpdateRequest->get('completed'),
+            user_id: Auth::id(),
+            completed_at: $todoUpdateRequest->get('completed', null) ? now() : null,
+            due_date: $todoUpdateRequest->get('due_date', null),
+            created_at: null,
+            updated_at: now(),
+        );
+
+        $response = $this->todoService->update($id, $todoDto);
+
+        return $this->jsonResponse(
+            $response->status,
+            $response->message,
+            $response->todo ?? [],
+            $response->statusCode
+        );
+    }
+
+    /**
+     * Delete a tod'os
+     *
+     * @urlParam id required The ID of the tod'os. Example: 1
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function delete(int $id): \Illuminate\Http\JsonResponse
+    {
+        $response = $this->todoService->delete($id);
 
         return $this->jsonResponse(
             $response->status,
