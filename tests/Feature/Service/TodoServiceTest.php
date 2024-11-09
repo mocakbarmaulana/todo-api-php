@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 describe("test_get_services", function () {
     it("test_get_services_success", function () {
         $userId = 1;
-        $isCompleted = true;
+        $isCompleted = 1;
         $orderType = 'asc';
 
         // Mock data untuk response
@@ -50,6 +50,36 @@ describe("test_get_services", function () {
         expect($response->status)->toBe("success");
         expect($response->message)->toBe(sprintf(TodoConstant::TODO_SUCCESSFULLY, 'get'));
         expect($response->todo)->toBe($mockTodos);
+    });
+
+    it("test_get_services_empty_data", function () {
+        $userId = 1;
+        $isCompleted = true;
+        $orderType = 'asc';
+
+        $mockTodo = Mockery::mock(\App\Models\Todo::class);
+        $mockTodo->shouldReceive('query->where->when->orderBy->get')->andReturn(collect());
+
+        $this->app->instance(\App\Models\Todo::class, $mockTodo);
+
+        // Membuat instance TodoService
+        $todoService = $this->app->make(\App\Service\TodoService::class);
+
+        // Membuat TodoIndexDto untuk parameter method `get`
+        $todoIndexDto = new \App\Dto\Todo\TodoIndexDto(
+            userId: $userId,
+            isCompleted: $isCompleted,
+            orderType: $orderType
+        );
+
+        // Memanggil method `get`
+        $response = $todoService->get($todoIndexDto);
+
+        // Assertions
+        expect($response->statusCode)->toBe(200);
+        expect($response->status)->toBe("success");
+        expect($response->message)->toBe("No todos found");
+        expect($response->todo)->toBe(null);
     });
 
     it("test_get_services_query_exception", function () {

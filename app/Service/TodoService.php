@@ -51,7 +51,7 @@ class TodoService
 
         try {
             $todos = $this->todo->query()->where('user_id', $todoIndexDto->userId)
-                ->when($todoIndexDto->isCompleted !== null, function ($query) use ($todoIndexDto) {
+                ->when($todoIndexDto->isCompleted, function ($query) use ($todoIndexDto) {
                     return $query->where('completed', $todoIndexDto->isCompleted);
                 })
                 ->orderBy('created_at', $todoIndexDto->orderType)
