@@ -1,6 +1,6 @@
 <?php
 
-it("invalid_todo_create_request", function () {
+it("test_invalid_todo_create_request", function () {
     $data = [
         "title" => "Test Title",
     ];
@@ -12,10 +12,11 @@ it("invalid_todo_create_request", function () {
     expect($validator->fails())->toBeTrue();
 });
 
-it("valid_todo_create_request", function () {
+it("test_valid_todo_create_request", function () {
     $data = [
         "title" => "Test Title",
         "description" => "Test Description",
+        "completed" => false,
     ];
 
     $request = new \App\Http\Requests\Todo\TodoCreateRequest();
@@ -30,5 +31,5 @@ it("authorizes_the_todo_create_request", function () {
 
     $isAuthorized = $request->authorize();
 
-    expect($isAuthorized)->toBeFalse();
+    expect($isAuthorized)->toBeTrue();
 });

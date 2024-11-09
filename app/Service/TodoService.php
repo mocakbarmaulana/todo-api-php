@@ -67,9 +67,6 @@ class TodoService
                 $response->message = 'No todos found';
                 $response->statusCode = 200;
             }
-        } catch (\Illuminate\Database\QueryException $e) {
-            Log::error("Database error while getting todo: {$e->getMessage()}");
-            $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Database', 'getting');
         } catch (\Exception $e) {
             Log::error("Unexpected error while getting todo: {$e->getMessage()}");
             $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Unexpected', 'getting');
@@ -101,9 +98,6 @@ class TodoService
             $response->todo = $todo;
             $response->message = sprintf(TodoConstant::TODO_SUCCESSFULLY, 'created');
             $response->statusCode = 201;
-        } catch (\Illuminate\Database\QueryException $e) {
-            Log::error("Database error while creating todo: {$e->getMessage()}");
-            $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Database', 'creating');
         } catch (\Exception $e) {
             Log::error("Unexpected error while creating todo: {$e->getMessage()}");
             $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Unexpected', 'creating');

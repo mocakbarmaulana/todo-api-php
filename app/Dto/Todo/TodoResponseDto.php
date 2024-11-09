@@ -12,6 +12,6 @@ class TodoResponseDto extends Data
         public TodoModel|Collection|null $todo,
         public string $status,
         public string $message,
-        public string $statusCode
+        public int $statusCode
     ) {}
 }

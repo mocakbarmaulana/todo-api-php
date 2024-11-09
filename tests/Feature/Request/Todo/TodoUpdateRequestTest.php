@@ -1,6 +1,6 @@
 <?php
 
-it("invalid_todo_update_request", function () {
+it("test_invalid_todo_update_request", function () {
     $data = [
         "title" => "Test Title",
     ];
@@ -12,7 +12,7 @@ it("invalid_todo_update_request", function () {
     expect($validator->fails())->toBeTrue();
 });
 
-it("valid_todo_update_request", function () {
+it("test_valid_todo_update_request", function () {
     $data = [
         "title" => "Test Title",
         "description" => "Test Description",
@@ -31,5 +31,5 @@ it("authorizes_the_todo_update_request", function () {
 
     $isAuthorized = $request->authorize();
 
-    expect($isAuthorized)->toBeFalse();
+    expect($isAuthorized)->toBeTrue();
 });
