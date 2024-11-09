@@ -9,7 +9,7 @@ use App\Traits\JsonResponseTrait;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * @group Tod
+ * @group Tod'os
  *
  * APIs for managing todos.
  * @header Accept application/json
@@ -29,6 +29,8 @@ class TodoController extends Controller
 
     /**
      * Get all tod'os
+     * @queryParam is_completed boolean Filter by completed status. Example: 1
+     * @queryParam order_type string Order by created_at. Example: desc
      *
      * @param TodoIndexRequest $todoIndexRequest
      * @return \Illuminate\Http\JsonResponse
@@ -53,6 +55,9 @@ class TodoController extends Controller
 
     /**
      * Create a new tod'os
+     * @bodyParam title string required The title of the tod'os. Example: My first tod'os
+     * @bodyParam description string required The description of the tod'os. Example: This is my first tod'os
+     * @bodyParam completed boolean required The completed status of the tod'os. Example: 0
      *
      * @param TodoCreateRequest $todoCreateRequest
      * @return \Illuminate\Http\JsonResponse
@@ -84,7 +89,7 @@ class TodoController extends Controller
     /**
      * Show a tod'os
      *
-     * @urlParam id required The ID of the tod'os
+     * @urlParam id required The ID of the tod'os. Example: 1
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */

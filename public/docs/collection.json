@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "Todo API",
-        "_postman_id": "1dc14f1f-3202-4291-9e5f-4ffbd9875d9f",
+        "_postman_id": "4f1bdb1b-906e-45c7-b2e4-8b89ae338812",
         "description": "Aplikasi Simple TODO API adalah aplikasi yang memungkinkan pengguna untuk mengelola daftar tugas (TODO) mereka dengan mudah. Aplikasi ini dibangun menggunakan PHP 8.3+, Composer, dan PostgreSQL sebagai basis data. API ini dirancang untuk memberikan antarmuka yang sederhana dan efisien untuk operasi CRUD (Create, Read, Update, Delete) pada tugas.",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -187,6 +187,154 @@
                             {
                                 "key": "Authorization",
                                 "value": "Bearer {token}"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Tod'os",
+            "description": "\nAPIs for managing todos.",
+            "item": [
+                {
+                    "name": "Get all tod'os",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/todos",
+                            "query": [
+                                {
+                                    "key": "is_completed",
+                                    "value": "1",
+                                    "description": "Filter by completed status.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "order_type",
+                                    "value": "desc",
+                                    "description": "Order by created_at.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/todos?is_completed=1&order_type=desc"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"is_completed\":\"1\",\"order_type\":\"asc\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Create a new tod'os",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/todos",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/todos"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"title\":\"My first tod'os\",\"description\":\"This is my first tod'os\",\"completed\":false}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Show a tod'os",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/todos\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/todos\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "The ID of the tod'os."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
                             }
                         ],
                         "body": null,

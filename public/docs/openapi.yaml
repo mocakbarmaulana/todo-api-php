@@ -130,6 +130,138 @@ paths:
                     example: Unauthenticated.
       tags:
         - 'Random Joke'
+  /api/v1/todos:
+    get:
+      summary: "Get all tod'os"
+      operationId: getAllTodos
+      description: ''
+      parameters:
+        -
+          in: query
+          name: is_completed
+          description: 'Filter by completed status.'
+          example: true
+          required: false
+          schema:
+            type: boolean
+            description: 'Filter by completed status.'
+            example: true
+            nullable: false
+        -
+          in: query
+          name: order_type
+          description: 'Order by created_at.'
+          example: desc
+          required: false
+          schema:
+            type: string
+            description: 'Order by created_at.'
+            example: desc
+            nullable: false
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - "Tod'os"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is_completed:
+                  type: boolean
+                  description: ''
+                  example: '1'
+                  nullable: true
+                  enum:
+                    - '0'
+                    - '1'
+                order_type:
+                  type: string
+                  description: ''
+                  example: asc
+                  nullable: false
+                  enum:
+                    - asc
+                    - desc
+              required:
+                - order_type
+    post:
+      summary: "Create a new tod'os"
+      operationId: createANewTodos
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - "Tod'os"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: "The title of the tod'os."
+                  example: "My first tod'os"
+                  nullable: false
+                description:
+                  type: string
+                  description: "The description of the tod'os."
+                  example: "This is my first tod'os"
+                  nullable: false
+                completed:
+                  type: boolean
+                  description: "The completed status of the tod'os."
+                  example: false
+                  nullable: false
+              required:
+                - title
+                - description
+                - completed
+  '/api/v1/todos/{id}':
+    get:
+      summary: "Show a tod'os"
+      operationId: showATodos
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - "Tod'os"
+    parameters:
+      -
+        in: path
+        name: id
+        description: "The ID of the tod'os."
+        example: '1'
+        required: true
+        schema:
+          type: string
 tags:
   -
     name: Auth
@@ -137,3 +269,6 @@ tags:
   -
     name: 'Random Joke'
     description: 'APIs for getting a random joke'
+  -
+    name: "Tod'os"
+    description: "\nAPIs for managing todos."
