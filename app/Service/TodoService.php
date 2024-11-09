@@ -133,9 +133,6 @@ class TodoService
             Log::error("Todo not found: {$e->getMessage()}");
             $response->message = TodoConstant::TODO_NOT_FOUND;
             $response->statusCode = 404;
-        } catch (\Illuminate\Database\QueryException $e) {
-            Log::error("Database error while getting todo: {$e->getMessage()}");
-            $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Database', 'getting');
         } catch (\Exception $e) {
             Log::error("Unexpected error while getting todo: {$e->getMessage()}");
             $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Unexpected', 'getting');
@@ -168,15 +165,12 @@ class TodoService
 
             $response->status = 'success';
             $response->todo = $todo;
-            $response->message = sprintf(TodoConstant::TODO_SUCCESSFULLY, 'update');
+            $response->message = sprintf(TodoConstant::TODO_SUCCESSFULLY, 'updated');
             $response->statusCode = 200;
         } catch (ModelNotFoundException $e) {
             Log::error("Todo not found: {$e->getMessage()}");
             $response->message = TodoConstant::TODO_NOT_FOUND;
             $response->statusCode = 404;
-        } catch (\Illuminate\Database\QueryException $e) {
-            Log::error("Database error while updating todo: {$e->getMessage()}");
-            $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Database', 'updating');
         } catch (\Exception $e) {
             Log::error("Unexpected error while updating todo: {$e->getMessage()}");
             $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Unexpected', 'updating');
@@ -212,9 +206,6 @@ class TodoService
             Log::error("Todo not found: {$e->getMessage()}");
             $response->message = TodoConstant::TODO_NOT_FOUND;
             $response->statusCode = 404;
-        } catch (\Illuminate\Database\QueryException $e) {
-            Log::error("Database error while deleting todo: {$e->getMessage()}");
-            $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Database', 'deleting');
         } catch (\Exception $e) {
             Log::error("Unexpected error while deleting todo: {$e->getMessage()}");
             $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Unexpected', 'deleting');

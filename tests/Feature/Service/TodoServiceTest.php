@@ -169,126 +169,237 @@ describe("test_create_services", function () {
     });
 });
 
-it("test_get_todo_success", function () {
-    $data = [
-        "title" => Factory::create()->sentence,
-        "description" => Factory::create()->word,
-    ];
+describe("test_detail_services", function () {
+    it("test_detail_services_success", function () {
+        $data = [
+            "title" => Factory::create()->sentence,
+            "description" => Factory::create()->words(30, true),
+            "completed" => Factory::create()->boolean,
+            "user_id" => Factory::create()->numberBetween(1, 100),
+            "created_at" => now(),
+            "updated_at" => now(),
+            "completed_at" => now(),
+            "due_date" => now(),
+            "id" => Factory::create()->numberBetween(1, 100),
+        ];
 
-    $mockTodo = Mockery::mock(\App\Models\Todo::class);
-    $mockTodo->shouldReceive("findOrFail")->andReturn(new \App\Models\Todo($data));
+        $mockTodo = Mockery::mock(\App\Models\Todo::class);
+        $mockTodo->shouldReceive("findOrFail")->andReturn(new \App\Models\Todo($data));
 
-    $this->app->instance(\App\Models\Todo::class, $mockTodo);
+        $this->app->instance(\App\Models\Todo::class, $mockTodo);
 
-    $todoService = $this->app->make(\App\Service\TodoService::class);
-    $response = $todoService->get(1);
+        $todoService = $this->app->make(\App\Service\TodoService::class);
+        $response = $todoService->detail(1);
 
-    expect($response->getStatusCode())->toBe(200);
-    expect(json_decode(json_encode($response->getData()), true))->toBe([
-        "status" => "success",
-        "message" => TodoConstant::TODO_GET_SUCCESS,
-        "data" => $data,
-    ]);
+        expect($response->statusCode)->toBe(200);
+        expect($response->status)->toBe("success");
+        expect($response->message)->toBe(sprintf(TodoConstant::TODO_SUCCESSFULLY, 'get'));
+    });
+
+    it("test_detail_services_not_found_model", function () {
+        $mockTodo = Mockery::mock(\App\Models\Todo::class);
+        $mockTodo->shouldReceive("findOrFail")->andThrow(new \Illuminate\Database\Eloquent\ModelNotFoundException());
+
+        $this->app->instance(\App\Models\Todo::class, $mockTodo);
+
+        Log::shouldReceive("error")->once()
+            ->with("Todo not found: ");
+
+        $todoService = $this->app->make(\App\Service\TodoService::class);
+        $response = $todoService->detail(1);
+
+        expect($response->statusCode)->toBe(404);
+        expect($response->status)->toBe("error");
+        expect($response->message)->toBe("Todo not found");
+    });
+
+    it("test_detail_services_exception", function () {
+        $mockTodo = Mockery::mock(\App\Models\Todo::class);
+        $mockTodo->shouldReceive("findOrFail")->andThrow(new \Exception("Database error"));
+
+        $this->app->instance(\App\Models\Todo::class, $mockTodo);
+
+        Log::shouldReceive("error")->once()
+            ->with("Unexpected error while getting todo: Database error");
+
+        $todoService = $this->app->make(\App\Service\TodoService::class);
+        $response = $todoService->detail(1);
+
+        expect($response->statusCode)->toBe(500);
+        expect($response->status)->toBe("error");
+        expect($response->message)->toBe(sprintf(TodoConstant::TODO_EXCEPTION, 'Unexpected', 'getting'));
+    });
 });
 
-it("test_get_todo_fail", function () {
-    $mockTodo = Mockery::mock(\App\Models\Todo::class);
-    $mockTodo->shouldReceive("findOrFail")->andThrow(new \Illuminate\Database\Eloquent\ModelNotFoundException());
+describe("test_update_services", function () {
+    it("test_update_services_success", function () {
+        $data = [
+            "title" => Factory::create()->sentence,
+            "description" => Factory::create()->words(30, true),
+            "completed" => Factory::create()->boolean,
+            "user_id" => Factory::create()->numberBetween(1, 100),
+            "created_at" => now(),
+            "updated_at" => now(),
+            "completed_at" => now(),
+            "due_date" => now(),
+            "id" => Factory::create()->numberBetween(1, 100),
+        ];
 
-    $this->app->instance(\App\Models\Todo::class, $mockTodo);
+        $todoDto = new \App\Dto\Todo\TodoDto(
+            title: $data["title"],
+            description: $data["description"],
+            completed: $data["completed"],
+            user_id: $data["user_id"],
+            created_at: $data["created_at"],
+            updated_at: $data["updated_at"],
+            completed_at: $data["completed_at"],
+            due_date: $data["due_date"],
+            id: $data["id"],
+        );
 
-    $todoService = $this->app->make(\App\Service\TodoService::class);
-    $response = $todoService->get(1);
+        $mockTodo = Mockery::mock(\App\Models\Todo::class);
+        $mockTodo->shouldReceive("findOrFail")->andReturn(new \App\Models\Todo($data));
+        $mockTodo->shouldReceive("update")->andReturn(new \App\Models\Todo($data));
 
-    expect($response->getStatusCode())->toBe(404);
-    expect(json_decode(json_encode($response->getData()), true))->toBe([
-        "status" => "error",
-        "message" => "Todo not found",
-        "data" => [],
-    ]);
+        $this->app->instance(\App\Models\Todo::class, $mockTodo);
+
+        $todoService = $this->app->make(\App\Service\TodoService::class);
+        $response = $todoService->update(1, $todoDto);
+
+        expect($response->statusCode)->toBe(200);
+        expect($response->status)->toBe("success");
+        expect($response->message)->toBe(sprintf(TodoConstant::TODO_SUCCESSFULLY, 'updated'));
+    });
+
+    it("test_update_services_not_found_model", function () {
+        $mockTodo = Mockery::mock(\App\Models\Todo::class);
+        $mockTodo->shouldReceive("findOrFail")->andThrow(new \Illuminate\Database\Eloquent\ModelNotFoundException());
+
+        $this->app->instance(\App\Models\Todo::class, $mockTodo);
+
+        Log::shouldReceive("error")->once()
+            ->with("Todo not found: ");
+
+        $todoService = $this->app->make(\App\Service\TodoService::class);
+        $response = $todoService->update(1, new \App\Dto\Todo\TodoDto(
+            title: "Sample Title",
+            description: "Sample Description",
+            completed: false,
+            user_id: 1,
+            created_at: now(),
+            updated_at: now(),
+            completed_at: now(),
+            due_date: now(),
+            id: 1,
+        ));
+
+        expect($response->statusCode)->toBe(404);
+        expect($response->status)->toBe("error");
+        expect($response->message)->toBe("Todo not found");
+    });
+
+    it("test_update_services_exception", function () {
+        $data = [
+            "title" => Factory::create()->sentence,
+            "description" => Factory::create()->words(30, true),
+            "completed" => Factory::create()->boolean,
+            "user_id" => Factory::create()->numberBetween(1, 100),
+            "created_at" => now(),
+            "updated_at" => now(),
+            "completed_at" => now(),
+            "due_date" => now(),
+            "id" => Factory::create()->numberBetween(1, 100),
+        ];
+
+        $todoDto = new \App\Dto\Todo\TodoDto(
+            title: $data["title"],
+            description: $data["description"],
+            completed: $data["completed"],
+            user_id: $data["user_id"],
+            created_at: $data["created_at"],
+            updated_at: $data["updated_at"],
+            completed_at: $data["completed_at"],
+            due_date: $data["due_date"],
+            id: $data["id"],
+        );
+
+        $mockTodo = Mockery::mock(\App\Models\Todo::class);
+        $mockTodo->shouldReceive("findOrFail")->andThrow(new \Exception("Database error"));
+        $mockTodo->shouldReceive("update")->andThrow(new \Exception("Database error"));
+
+        $this->app->instance(\App\Models\Todo::class, $mockTodo);
+
+        Log::shouldReceive("error")->once()
+            ->with("Unexpected error while updating todo: Database error");
+
+        $todoService = $this->app->make(\App\Service\TodoService::class);
+        $response = $todoService->update($data["id"], $todoDto);
+
+        expect($response->statusCode)->toBe(500);
+        expect($response->status)->toBe("error");
+        expect($response->message)->toBe(sprintf(TodoConstant::TODO_EXCEPTION, 'Unexpected', 'updating'));
+    });
 });
 
-it("test_update_todo_success", function () {
-    $data = [
-        "title" => Factory::create()->sentence,
-        "description" => Factory::create()->words,
-    ];
+describe("test_delete_services", function () {
+    it("test_delete_services_success", function () {
+        $data = [
+            "title" => Factory::create()->sentence,
+            "description" => Factory::create()->words(30, true),
+            "completed" => Factory::create()->boolean,
+            "user_id" => Factory::create()->numberBetween(1, 100),
+            "created_at" => now(),
+            "updated_at" => now(),
+            "completed_at" => now(),
+            "due_date" => now(),
+            "id" => Factory::create()->numberBetween(1, 100),
+        ];
 
-    $mockTodo = Mockery::mock(\App\Models\Todo::class);
-    $mockTodo->shouldReceive("findOrFail")->andReturn(new \App\Models\Todo($data));
-    $mockTodo->shouldReceive("update")->andReturn(new \App\Models\Todo($data));
+        $mockTodo = Mockery::mock(\App\Models\Todo::class);
+        $mockTodo->shouldReceive("findOrFail")->andReturn(new \App\Models\Todo($data));
+        $mockTodo->shouldReceive("delete")->andReturn(true);
 
-    $this->app->instance(\App\Models\Todo::class, $mockTodo);
+        $this->app->instance(\App\Models\Todo::class, $mockTodo);
 
-    $todoService = $this->app->make(\App\Service\TodoService::class);
-    $response = $todoService->update(1, $data);
+        $todoService = $this->app->make(\App\Service\TodoService::class);
+        $response = $todoService->delete(1);
 
-    expect($response->getStatusCode())->toBe(200);
-    expect(json_decode(json_encode($response->getData()), true))->toBe([
-        "status" => "success",
-        "message" => TodoConstant::TODO_UPDATE_SUCCESS,
-        "data" => $data,
-    ]);
-});
+        expect($response->statusCode)->toBe(200);
+        expect($response->status)->toBe("success");
+        expect($response->message)->toBe(sprintf(TodoConstant::TODO_SUCCESSFULLY, 'deleted'));
+    });
 
-it("test_update_todo_fail", function () {
-    $data = [
-        "title" => Factory::create()->sentence,
-        "description" => Factory::create()->words,
-    ];
+    it("test_delete_services_not_found_model", function () {
+        $mockTodo = Mockery::mock(\App\Models\Todo::class);
+        $mockTodo->shouldReceive("findOrFail")->andThrow(new \Illuminate\Database\Eloquent\ModelNotFoundException());
 
-    $mockTodo = Mockery::mock(\App\Models\Todo::class);
-    $mockTodo->shouldReceive("findOrFail")->andThrow(new \Illuminate\Database\Eloquent\ModelNotFoundException());
+        $this->app->instance(\App\Models\Todo::class, $mockTodo);
 
-    $this->app->instance(\App\Models\Todo::class, $mockTodo);
+        Log::shouldReceive("error")->once()
+            ->with("Todo not found: ");
 
-    $todoService = $this->app->make(\App\Service\TodoService::class);
-    $response = $todoService->update(1, $data);
+        $todoService = $this->app->make(\App\Service\TodoService::class);
+        $response = $todoService->delete(1);
 
-    expect($response->getStatusCode())->toBe(404);
-    expect(json_decode(json_encode($response->getData()), true))->toBe([
-        "status" => "error",
-        "message" => "Todo not found",
-        "data" => [],
-    ]);
-});
+        expect($response->statusCode)->toBe(404);
+        expect($response->status)->toBe("error");
+        expect($response->message)->toBe("Todo not found");
+    });
 
-it("test_delete_todo_success", function () {
-    $data = [
-        "title" => Factory::create()->sentence,
-        "description" => Factory::create()->words,
-    ];
+    it("test_delete_services_exception", function () {
+        $mockTodo = Mockery::mock(\App\Models\Todo::class);
+        $mockTodo->shouldReceive("findOrFail")->andThrow(new \Exception("Database error"));
 
-    $mockTodo = Mockery::mock(\App\Models\Todo::class);
-    $mockTodo->shouldReceive("findOrFail")->andReturn(new \App\Models\Todo($data));
-    $mockTodo->shouldReceive("delete")->andReturn(true);
+        $this->app->instance(\App\Models\Todo::class, $mockTodo);
 
-    $this->app->instance(\App\Models\Todo::class, $mockTodo);
+        Log::shouldReceive("error")->once()
+            ->with("Unexpected error while deleting todo: Database error");
 
-    $todoService = $this->app->make(\App\Service\TodoService::class);
-    $response = $todoService->delete(1);
+        $todoService = $this->app->make(\App\Service\TodoService::class);
+        $response = $todoService->delete(1);
 
-    expect($response->getStatusCode())->toBe(200);
-    expect(json_decode(json_encode($response->getData()), true))->toBe([
-        "status" => "success",
-        "message" => TodoConstant::TODO_DELETE_SUCCESS,
-        "data" => [],
-    ]);
-});
-
-it("test_delete_todo_fail", function () {
-    $mockTodo = Mockery::mock(\App\Models\Todo::class);
-    $mockTodo->shouldReceive("findOrFail")->andThrow(new \Illuminate\Database\Eloquent\ModelNotFoundException());
-
-    $this->app->instance(\App\Models\Todo::class, $mockTodo);
-
-    $todoService = $this->app->make(\App\Service\TodoService::class);
-    $response = $todoService->delete(1);
-
-    expect($response->getStatusCode())->toBe(404);
-    expect(json_decode(json_encode($response->getData()), true))->toBe([
-        "status" => "error",
-        "message" => "Todo not found",
-        "data" => [],
-    ]);
+        expect($response->statusCode)->toBe(500);
+        expect($response->status)->toBe("error");
+        expect($response->message)->toBe(sprintf(TodoConstant::TODO_EXCEPTION, 'Unexpected', 'deleting'));
+    });
 });
