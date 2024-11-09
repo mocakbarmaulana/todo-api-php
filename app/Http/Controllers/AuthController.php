@@ -10,6 +10,8 @@ use App\Service\AuthService;
  * @group Auth
  *
  * APIs for managing authentication
+ * @header Accept application/json
+ * @header Content-Type application/json
  * @package App\Http\Controllers
  */
 class AuthController extends Controller
@@ -27,6 +29,7 @@ class AuthController extends Controller
 
     /**
      * Login a user
+     * @unauthenticated
      * @bodyparam email string required The email of the user. Example: test@example.com
      * @bodyparam password string required The password of the user. Example: password
      *
@@ -40,6 +43,7 @@ class AuthController extends Controller
 
     /**
      * Register a user
+     * @unauthenticated
      * @bodyparam name string required The name of the user. Example: John Doe
      * @bodyparam email string required The email of the user. Example: test@example.com
      * @bodyparam password string required The password of the user. Example: password
@@ -55,9 +59,6 @@ class AuthController extends Controller
 
     /**
      * Logout a user
-     * @authenticated
-     * @header Accept application/json
-     * @header Content-Type application/json
      * @header Authorization Bearer {token}
      * @return \Illuminate\Http\JsonResponse
      */
@@ -68,9 +69,6 @@ class AuthController extends Controller
 
     /**
      * Get the authenticated user
-     * @authenticated
-     * @header Accept application/json
-     * @header Content-Type application/json
      * @header Authorization Bearer {token}
      * @return \Illuminate\Http\JsonResponse
      */

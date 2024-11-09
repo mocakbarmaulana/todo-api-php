@@ -7,7 +7,6 @@ use App\Service\RandomJokeService;
 /**
  * @group Random Joke
  * APIs for getting a random joke
- * @authenticated
  * @header Accept application/json
  * @header Content-Type application/json
  * @header Authorization Bearer {token}

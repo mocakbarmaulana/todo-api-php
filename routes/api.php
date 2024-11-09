@@ -10,10 +10,16 @@ Route::group(['prefix' => 'v1'], function () {
 });
 
 Route::group(["prefix" => "v1", "middleware" => "auth:api"], function () {
+    // Auth routes
     Route::group(["prefix" => "auth"], function () {
         Route::post("logout", [\App\Http\Controllers\AuthController::class, "logout"]);
         Route::get("me", [\App\Http\Controllers\AuthController::class, "me"]);
     });
+
+    // TodoApi routes
+    Route::resources([
+        "todos" => \App\Http\Controllers\TodoController::class,
+    ]);
 
     Route::get("jokes", [\App\Http\Controllers\RandomJokeController::class, "get"]);
 });

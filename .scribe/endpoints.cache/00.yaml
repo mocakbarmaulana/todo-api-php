@@ -21,8 +21,8 @@ endpoints:
       authenticated: false
       custom: []
     headers:
-      Content-Type: application/json
       Accept: application/json
+      Content-Type: application/json
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -75,8 +75,8 @@ endpoints:
       authenticated: false
       custom: []
     headers:
-      Content-Type: application/json
       Accept: application/json
+      Content-Type: application/json
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []

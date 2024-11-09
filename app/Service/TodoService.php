@@ -3,11 +3,12 @@
 namespace App\Service;
 
 use App\Constants\TodoConstant;
-use App\Http\Requests\Todo\TodoCreateRequest;
-use App\Http\Requests\Todo\TodoUpdateRequest;
+use App\Dto\Todo\TodoIndexDto;
+use App\Dto\Todo\TodoResponseDto;
 use App\Models\Todo as ModelTodo;
 use App\Traits\JsonResponseTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class TodoService
 {
@@ -30,6 +31,50 @@ class TodoService
     protected function findTodoOrFail(int $id): ModelTodo
     {
         return $this->todo->findOrFail($id);
+    }
+
+    /**
+     * Get all data
+     *
+     * @param TodoIndexDto $todoIndexDto
+     * @return TodoResponseDto
+     */
+    public function getAll(TodoIndexDto $todoIndexDto): TodoResponseDto
+    {
+        $response = new TodoResponseDto(
+            todo: [],
+            status: 'error',
+            message: 'Failed to get todo',
+            statusCode: 500
+        );
+
+        try {
+            $todos = $this->todo->query()->where('user_id', $todoIndexDto->userId)
+                ->when($todoIndexDto->isCompleted !== null, function ($query) use ($todoIndexDto) {
+                    return $query->where('completed', $todoIndexDto->isCompleted);
+                })
+                ->orderBy('created_at', $todoIndexDto->orderType)
+                ->get();
+
+            // If todos are found, update the response
+            if ($todos->isNotEmpty()) {
+                $response->todo = $todos;
+                $response->status = 'success';
+                $response->message = 'Success to get todo';
+                $response->statusCode = 200;
+            } else {
+                $response->message = 'No todos found';
+                $response->statusCode = 404;
+            }
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error("Database error while getting todo: {$e->getMessage()}");
+            $response->message = 'Database error while getting todo';
+        } catch (\Exception $e) {
+            Log::error("Unexpected error while getting todo: {$e->getMessage()}");
+            $response->message = 'Unexpected error while getting todo';
+        }
+
+        return $response;
     }
 
 
