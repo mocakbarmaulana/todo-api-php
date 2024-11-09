@@ -6,7 +6,7 @@ use App\Constants\TodoConstant;
 use App\Dto\Todo\TodoDto;
 use App\Dto\Todo\TodoIndexDto;
 use App\Dto\Todo\TodoResponseDto;
-use App\Models\Todo as ModelTodo;
+use App\Models\Todo as TodoModel;
 use App\Traits\JsonResponseTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
@@ -15,9 +15,9 @@ class TodoService
 {
     use JsonResponseTrait;
 
-    protected ModelTodo $todo;
+    protected TodoModel $todo;
 
-    public function __construct(ModelTodo $todo)
+    public function __construct(TodoModel $todo)
     {
         $this->todo = $todo;
     }
@@ -29,7 +29,7 @@ class TodoService
      * @return ModleTodo
      * @throws ModelNotFoundException
      */
-    protected function findTodoOrFail(int $id): ModelTodo
+    protected function findTodoOrFail(int $id): TodoModel
     {
         return $this->todo->findOrFail($id);
     }
@@ -40,12 +40,12 @@ class TodoService
      * @param TodoIndexDto $todoIndexDto
      * @return TodoResponseDto
      */
-    public function getAll(TodoIndexDto $todoIndexDto): TodoResponseDto
+    public function get(TodoIndexDto $todoIndexDto): TodoResponseDto
     {
         $response = new TodoResponseDto(
             todo: null,
             status: 'error',
-            message: 'Failed to get todo',
+            message: sprintf(TodoConstant::TODO_FAILED, 'get'),
             statusCode: 500
         );
 
@@ -90,7 +90,7 @@ class TodoService
         $response = new TodoResponseDto(
             todo: null,
             status: 'error',
-            message: 'Failed to get todo',
+            message: sprintf(TodoConstant::TODO_FAILED, 'create'),
             statusCode: 500
         );
 
@@ -116,17 +116,38 @@ class TodoService
      * Get data
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return TodoResponseDto
      */
-    public function get(int $id): \Illuminate\Http\JsonResponse
+    public function detail(int $id): TodoResponseDto
     {
+        $response = new TodoResponseDto(
+            todo: null,
+            status: 'error',
+            message: sprintf(TodoConstant::TODO_FAILED, 'get'),
+            statusCode: 500
+        );
+
+
         try {
             $todo = $this->findTodoOrFail($id);
 
-            return $this->successResponse(TodoConstant::TODO_GET_SUCCESS, $todo);
+            $response->status = 'success';
+            $response->todo = $todo;
+            $response->message = TodoConstant::TODO_GET_SUCCESS;
+            $response->statusCode = 200;
         } catch (ModelNotFoundException $e) {
-            return $this->errorResponse(TodoConstant::TODO_NOT_FOUND, [], 404);
+            Log::error("Todo not found: {$e->getMessage()}");
+            $response->message = TodoConstant::TODO_NOT_FOUND;
+            $response->statusCode = 404;
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error("Database error while getting todo: {$e->getMessage()}");
+            $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Database', 'getting');
+        } catch (\Exception $e) {
+            Log::error("Unexpected error while getting todo: {$e->getMessage()}");
+            $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Unexpected', 'getting');
         }
+
+        return $response;
     }
 
     /**

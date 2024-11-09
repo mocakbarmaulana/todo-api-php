@@ -20,6 +20,7 @@ Route::group(["prefix" => "v1", "middleware" => "auth:api"], function () {
     Route::group(["prefix" => "todos"], function () {
         Route::get("", [\App\Http\Controllers\TodoController::class, "index"]);
         Route::post("", [\App\Http\Controllers\TodoController::class, "create"]);
+        Route::get("{id}", [\App\Http\Controllers\TodoController::class, "show"]);
         Route::put("{id}", [\App\Http\Controllers\TodoController::class, "update"]);
         Route::delete("{id}", [\App\Http\Controllers\TodoController::class, "delete"]);
     });

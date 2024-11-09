@@ -41,7 +41,7 @@ class TodoController extends Controller
             orderType: $todoIndexRequest->get('order_type', 'asc')
         );
 
-        $response = $this->todoService->getAll($todoIndexDto);
+        $response = $this->todoService->get($todoIndexDto);
 
         return $this->jsonResponse(
             $response->status,
@@ -72,6 +72,25 @@ class TodoController extends Controller
         );
 
         $response = $this->todoService->create($todoDto);
+
+        return $this->jsonResponse(
+            $response->status,
+            $response->message,
+            $response->todo ?? [],
+            $response->statusCode
+        );
+    }
+
+    /**
+     * Show a tod'os
+     *
+     * @urlParam id required The ID of the tod'os
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(int $id): \Illuminate\Http\JsonResponse
+    {
+        $response = $this->todoService->detail($id);
 
         return $this->jsonResponse(
             $response->status,
