@@ -56,15 +56,15 @@ class TodoService
                 ->orderBy('created_at', $todoIndexDto->orderType)
                 ->get();
 
+            $response->status = 'success';
             // If todos are found, update the response
             if ($todos->isNotEmpty()) {
                 $response->todo = $todos;
-                $response->status = 'success';
                 $response->message = 'Success to get todo';
                 $response->statusCode = 200;
             } else {
                 $response->message = 'No todos found';
-                $response->statusCode = 404;
+                $response->statusCode = 200;
             }
         } catch (\Illuminate\Database\QueryException $e) {
             Log::error("Database error while getting todo: {$e->getMessage()}");
