@@ -11,7 +11,7 @@ class TodoCreateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,6 +24,7 @@ class TodoCreateRequest extends FormRequest
         return [
             "title" => "required|string",
             "description" => "required|string",
+            "completed" => "required|boolean",
         ];
     }
 }

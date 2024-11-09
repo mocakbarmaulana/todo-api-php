@@ -17,9 +17,12 @@ Route::group(["prefix" => "v1", "middleware" => "auth:api"], function () {
     });
 
     // TodoApi routes
-    Route::resources([
-        "todos" => \App\Http\Controllers\TodoController::class,
-    ]);
+    Route::group(["prefix" => "todos"], function () {
+        Route::get("", [\App\Http\Controllers\TodoController::class, "index"]);
+        Route::post("", [\App\Http\Controllers\TodoController::class, "create"]);
+        Route::put("{id}", [\App\Http\Controllers\TodoController::class, "update"]);
+        Route::delete("{id}", [\App\Http\Controllers\TodoController::class, "delete"]);
+    });
 
     Route::get("jokes", [\App\Http\Controllers\RandomJokeController::class, "get"]);
 });

@@ -7,11 +7,8 @@ use Spatie\LaravelData\Data;
 
 class TodoResponseDto extends Data
 {
-     /**
-     * @param TodoModel[]|null $todo
-     */
     public function __construct(
-        public ?array $todo,
+        public ?TodoModel $todo,
         public string $status,
         public string $message,
         public string $statusCode

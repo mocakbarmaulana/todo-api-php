@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Constants\TodoConstant;
+use App\Dto\Todo\TodoDto;
 use App\Dto\Todo\TodoIndexDto;
 use App\Dto\Todo\TodoResponseDto;
 use App\Models\Todo as ModelTodo;
@@ -42,7 +43,7 @@ class TodoService
     public function getAll(TodoIndexDto $todoIndexDto): TodoResponseDto
     {
         $response = new TodoResponseDto(
-            todo: [],
+            todo: null,
             status: 'error',
             message: 'Failed to get todo',
             statusCode: 500
@@ -68,10 +69,10 @@ class TodoService
             }
         } catch (\Illuminate\Database\QueryException $e) {
             Log::error("Database error while getting todo: {$e->getMessage()}");
-            $response->message = 'Database error while getting todo';
+            $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Database', 'getting');
         } catch (\Exception $e) {
             Log::error("Unexpected error while getting todo: {$e->getMessage()}");
-            $response->message = 'Unexpected error while getting todo';
+            $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Unexpected', 'getting');
         }
 
         return $response;
@@ -81,14 +82,34 @@ class TodoService
     /**
      * Create a data
      *
-     * @param array $data
-     * @return \Illuminate\Http\JsonResponse
+     * @param TodoDto $data
+     * @return TodoResponseDto
      */
-    public function create(array $data): \Illuminate\Http\JsonResponse
+    public function create(TodoDto $data): TodoResponseDto
     {
-        $todo = $this->todo->create($data);
+        $response = new TodoResponseDto(
+            todo: null,
+            status: 'error',
+            message: 'Failed to get todo',
+            statusCode: 500
+        );
 
-        return $this->successResponse(TodoConstant::TODO_CREATE_SUCCESS, $todo, 201);
+        try {
+            $todo = $this->todo->create($data->toArray());
+
+            $response->status = 'success';
+            $response->todo = $todo;
+            $response->message = TodoConstant::TODO_CREATE_SUCCESS;
+            $response->statusCode = 201;
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error("Database error while creating todo: {$e->getMessage()}");
+            $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Database', 'creating');
+        } catch (\Exception $e) {
+            Log::error("Unexpected error while creating todo: {$e->getMessage()}");
+            $response->message = sprintf(TodoConstant::TODO_EXCEPTION, 'Unexpected', 'creating');
+        }
+
+        return $response;
     }
 
     /**
