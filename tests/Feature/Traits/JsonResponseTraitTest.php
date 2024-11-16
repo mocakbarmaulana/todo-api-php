@@ -32,3 +32,21 @@ it("valid_error_response", function () {
     expect($response->getData())->toBeObject()->toHaveProperty("data", (object) $data);
 });
 
+it("test_valid_json_response", function () {
+    $status = "success";
+    $message = "Test Message";
+    $data = ["test" => "data"];
+    $statusCode = 200;
+
+    $controller = new class {
+        use \App\Traits\JsonResponseTrait;
+    };
+
+    $response = $controller->jsonResponse($status, $message, $data, $statusCode);
+
+    expect($response->getStatusCode())->toBe($statusCode);
+    expect($response->getData())->toBeObject()->toHaveProperty("status", $status);
+    expect($response->getData())->toBeObject()->toHaveProperty("message", $message);
+    expect($response->getData())->toBeObject()->toHaveProperty("data", (object) $data);
+});
+
